@@ -38,32 +38,88 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <descriptors>
-                    <descriptor>src/assembly/bin.xml</descriptor>
-                    </descriptors>
+                    <!-- Every execution attaches an artifact with the same
+                         classifier (bin); disable attach so they don't clobber
+                         each other in the reactor / local repo. -->
+                    <attach>false</attach>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>pack1</id>
+                        <id>pack-portable</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                        <finalName>weavedreamer-${project.version}</finalName>
+                            <finalName>weavedreamer-${project.version}</finalName>
+                            <descriptors>
+                                <descriptor>src/assembly/bin.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>pack2</id>
+                        <id>pack-linux-x64</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
                         <configuration>
                             <finalName>weavedreamer-${project.version}-linux-x64</finalName>
-                            <additionalProperties>
-                                <runtime>linux_x64</runtime>
-                            </additionalProperties>
+                            <descriptors>
+                                <descriptor>src/assembly/bin-linux_x64.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pack-linux-arm</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>weavedreamer-${project.version}-linux-arm</finalName>
+                            <descriptors>
+                                <descriptor>src/assembly/bin-linux_arm.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pack-mac-x64</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>weavedreamer-${project.version}-mac-x64</finalName>
+                            <descriptors>
+                                <descriptor>src/assembly/bin-mac_x64.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pack-mac-arm</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>weavedreamer-${project.version}-mac-arm</finalName>
+                            <descriptors>
+                                <descriptor>src/assembly/bin-mac_arm.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pack-windows</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>weavedreamer-${project.version}-windows</finalName>
+                            <descriptors>
+                                <descriptor>src/assembly/bin-windows.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>
@@ -75,7 +131,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <executable>python</executable>
+                            <executable>python3</executable>
                             <arguments>
                                 <argument>fetch_doc.py</argument>
                             </arguments>
