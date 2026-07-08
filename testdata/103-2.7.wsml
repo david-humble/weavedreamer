@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="1.8.0_151" class="java.beans.XMLDecoder">
+<java version="25.0.2" class="java.beans.XMLDecoder">
  <object class="com.jenkins.weavingsimulator.datatypes.WeavingDraft" id="WeavingDraft0">
   <void property="ends">
    <void method="add">
-    <object class="com.jenkins.weavingsimulator.datatypes.WarpEnd">
+    <object class="com.jenkins.weavingsimulator.datatypes.WarpEnd" id="WarpEnd0">
      <void property="color">
       <object class="java.awt.Color" id="Color0">
        <int>204</int>
@@ -12,6 +12,7 @@
        <int>255</int>
       </object>
      </void>
+     <void id="Integer0" property="harnessId"/>
     </object>
    </void>
    <void method="add">
@@ -330,7 +331,7 @@
      </object>
     </void>
     <void property="selection">
-     <int>0</int>
+     <object idref="Integer0"/>
     </void>
    </object>
   </void>
@@ -788,7 +789,7 @@
    <void method="add">
     <object class="com.jenkins.weavingsimulator.datatypes.Treadle">
      <void method="add">
-      <int>0</int>
+      <object idref="Integer0"/>
      </void>
      <void method="add">
       <int>3</int>
@@ -818,7 +819,7 @@
    <void method="add">
     <object class="com.jenkins.weavingsimulator.datatypes.Treadle">
      <void method="add">
-      <int>0</int>
+      <object idref="Integer0"/>
      </void>
      <void method="add">
       <int>3</int>
