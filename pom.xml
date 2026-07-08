@@ -7,7 +7,7 @@
     <groupId>com.jenkins.weavedreamer</groupId>
     <artifactId>weavedreamer</artifactId>
     <packaging>jar</packaging>
-    <version>0.2.10.02-PRERELEASE</version>
+    <version>0.2.10.05-PRERELEASE</version>
     <name>WeaveDreamer</name>
     <url>https://sourceforge.net/projects/weavingsim/</url>
     <scm>
@@ -70,7 +70,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <executable>python</executable>
+                            <executable>python3</executable>
                             <arguments>
                                 <argument>fetch_doc.py</argument>
                             </arguments>
