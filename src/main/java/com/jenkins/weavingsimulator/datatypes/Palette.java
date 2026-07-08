@@ -57,7 +57,7 @@ public class Palette implements Serializable {
     private int selection = -1; // index into colors
     private String name;
 
-    private PropertyChangeSupport propertyChangeSupport =
+    private final PropertyChangeSupport propertyChangeSupport =
             new PropertyChangeSupport(this);
 
     /**
@@ -172,6 +172,30 @@ public class Palette implements Serializable {
         Color oldValue = colors.get(i);
         colors.set(i, c);
         propertyChangeSupport.fireIndexedPropertyChange("color", i, oldValue, c);
+    }
+
+    /** Inserts a new colour entry in the list
+     *
+     * @param where Index to insert the colour at.   Must be between 0 and <CODE>numColors+1.</CODE>
+     * @param what The colour to insert
+     */
+    public void insert(int where, Color what) {
+        colors.add(where, what);
+        propertyChangeSupport.firePropertyChange("numColors",
+                colors.size()-1, colors.size());
+    }
+
+    /**
+     * Remove a colour from the list.
+     * @param where The entry to remove.  Must be between 0 and <CODE>numColors.</CODE>
+     */
+    public void remove(int where) {
+        colors.remove(where);
+        if (selection == where) {
+            selection = -1;
+        }
+        propertyChangeSupport.firePropertyChange("numColors",
+                colors.size()+1, colors.size());
     }
 
     /**

@@ -24,7 +24,9 @@
 package com.jenkins.weavedreamer;
 
 import com.jenkins.weavedreamer.datatypes.WIFIO;
+import com.jenkins.weavedreamer.models.AbstractApp;
 import com.jenkins.weavedreamer.models.EditingSession;
+import com.jenkins.weavedreamer.models.PasteGrid;
 import com.jenkins.weavingsimulator.datatypes.Palette;
 import com.jenkins.weavingsimulator.datatypes.WeavingDraft;
 import com.jenkins.wifio.WIFException;
@@ -53,7 +55,7 @@ import static java.util.Arrays.asList;
 /**
  * @author ajenkins
  */
-public class WeaveDreamerApp extends javax.swing.JFrame {
+public class WeaveDreamerApp extends javax.swing.JFrame implements AbstractApp {
 
     /**
      *
@@ -409,7 +411,7 @@ public class WeaveDreamerApp extends javax.swing.JFrame {
         WeavingDraftPropertiesDialog dlg
                 = new WeavingDraftPropertiesDialog(this, true);
 
-        EditingSession session = new EditingSession(draft);
+        EditingSession session = new EditingSession(draft, this);
         if (!dlg.editProperties(session, loadPalettes())) {
             return;
         }
@@ -502,7 +504,7 @@ public class WeaveDreamerApp extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (UnsupportedLookAndFeelException e) {
@@ -608,7 +610,7 @@ public class WeaveDreamerApp extends javax.swing.JFrame {
             return;
         }
 
-        openWeavingDraftWindow(new EditingSession(draft, !file.getName().toLowerCase().endsWith(WIF_EXTENSION)), file);
+        openWeavingDraftWindow(new EditingSession(draft, !file.getName().toLowerCase().endsWith(WIF_EXTENSION), this), file);
     }
 
     private void reportWifFailure(File file) {
@@ -766,6 +768,16 @@ public class WeaveDreamerApp extends javax.swing.JFrame {
         }
     }
 
+    private PasteGrid selection = new PasteGrid();
+
+    public void setSelectedCells(PasteGrid selectedCells) {
+        selection = selectedCells;
+    }
+
+    public PasteGrid getSelectedCells() {
+        return selection;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem newMenuItem;
     private javax.swing.JMenuItem tiledViewMenuItem;
@@ -792,7 +804,7 @@ public class WeaveDreamerApp extends javax.swing.JFrame {
     private WifFileFilter wifFilter;
     DraftFileFilter draftFilter;
     private int newFileNum = 0;
-    private JFileChooser fileChooser;
+    private final JFileChooser fileChooser;
 
-    private File helpFile;
+    private final File helpFile;
 }

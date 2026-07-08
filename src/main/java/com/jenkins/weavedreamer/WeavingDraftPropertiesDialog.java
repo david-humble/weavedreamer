@@ -30,6 +30,8 @@ import com.jenkins.weavedreamer.models.EditingSession;
 import com.jenkins.weavedreamer.models.PalettePreviewModel;
 import com.jenkins.weavingsimulator.datatypes.Palette;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 import java.util.Vector;
 import java.util.prefs.Preferences;
@@ -67,7 +69,7 @@ public class WeavingDraftPropertiesDialog extends javax.swing.JDialog {
         });
 
         java.awt.Dimension dim = getPreferredSize();
-        dim.setSize(dim.width + 20, dim.height + 20);
+        dim.setSize(dim.width + 40, dim.height + 20);
         setSize(dim);
     }
 
@@ -187,7 +189,14 @@ public class WeavingDraftPropertiesDialog extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         getContentPane().add(palettes_combo, gridBagConstraints);
 
-        paletteGrid = new GridControl();
+        paletteGrid = new GridControl() {
+            @Override
+            public Dimension getPreferredSize() {
+                var d = super.getPreferredSize();
+                d.width = Math.min(d.width, getContentPane().getWidth() - 30);
+                return d;
+            }
+        };
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -266,7 +275,7 @@ public class WeavingDraftPropertiesDialog extends javax.swing.JDialog {
             this.palettes.add(session.getDraft().getPalette());
         }
         this.palettes.addAll(palettes);
-        palettes_combo.setSelectedItem(this.palettes.get(0));
+        palettes_combo.setSelectedItem(this.palettes.getFirst());
 
         numWarpEndsField.setValue(value_or_default(session.getDraft().getEnds().size(), "ends", 20));
         numWeftPicksField.setValue(value_or_default(session.getDraft().getPicks().size(), "picks", 20));
@@ -294,7 +303,7 @@ public class WeavingDraftPropertiesDialog extends javax.swing.JDialog {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         final WeavingDraftPropertiesDialog dlg =
                 new WeavingDraftPropertiesDialog(new javax.swing.JFrame(), true);
         dlg.okButton.addActionListener(e -> {
@@ -328,8 +337,8 @@ public class WeavingDraftPropertiesDialog extends javax.swing.JDialog {
     // used to communicate between button handlers, and editProperties() function
     private boolean editFinished;
     // used by JFormattedTextFields.
-    private NonNegativeIntFormatter formatter = new NonNegativeIntFormatter();
-    private Vector<Palette> palettes = new Vector<Palette>();
+    private final NonNegativeIntFormatter formatter = new NonNegativeIntFormatter();
+    private final Vector<Palette> palettes = new Vector<Palette>();
     private javax.swing.JComboBox<Palette> palettes_combo;
     private javax.swing.JCheckBox liftplanCheck;
     private javax.swing.JCheckBox networkCheck;
