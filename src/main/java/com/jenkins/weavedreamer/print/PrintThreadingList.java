@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,9 +29,15 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
     private int rememberedThread = 0;
     private int currentThread = 0;
     private boolean rememberedEOF = false;
+    private int numharnesses;
+    private ArrayList<Integer> harnessTotals = new ArrayList<Integer>(); 
 
     public PrintThreadingList(EditingSession session, WeavingDraftWindow draftWindow) {
         super(session, draftWindow);
+        numharnesses = draft.getNumHarnesses();          
+        for (int i=0;i < numharnesses;i++) {
+        	harnessTotals.add(0);
+        }
 
     }
 
@@ -44,6 +51,7 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
                 rememberedPageIndex = pageIndex;
                 // If encountered EOF on previous page, done  
                 if (rememberedEOF) {
+
                     return Printable.NO_SUCH_PAGE;
                 }
                 // Save current position in input file 
@@ -67,14 +75,22 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
             // Generate as many lines as will fit in imageable area 
             y += 36;
 
+            	
+            	
+            
+            int harnessID;
+            
             while (y + 12 < pf.getImageableY() + pf.getImageableHeight()) {
                 if (currentThread < draft.getEnds().size()) {
                     WarpEnd currentend = draft.getEnds().get(currentThread);
-                    int numharnesses = draft.getNumHarnesses();
+                    harnessID = currentend.getHarnessId();
+                    harnessTotals.set(harnessID , harnessTotals.get(harnessID)+1);
+                    
                     String[] Picklist = new String[numharnesses];
+                    
 
                     for (int j = 0; j < numharnesses; j++) {
-                        Picklist[j] = (Integer.toString((j + 1) * (currentend.getHarnessId() == j ? 1 : 0)));
+                        Picklist[j] = (Integer.toString((j + 1) * (harnessID == j ? 1 : 0)));
                         if (!"0".equals(Picklist[j])) {
                             g.fillRect(x + 15 + 10 * j, y - 10, 10, 10);
                         }
@@ -101,6 +117,20 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
                 }
 
             }
+            
+            if (rememberedEOF) {
+                g.setColor(Color.black);
+                g.setFont(textFont);
+             // assumes we can squeeze this 1 more line on    
+            	g.drawString("Threading Totals: " + harnessTotals.toString(), x,y); 
+            			//(int)pf.getImageableX() + 10,
+            			//(int)pf.getImageableY() + (int)pf.getImageableHeight()-20);
+            	
+          	
+            	
+            	
+            }
+            
             return Printable.PAGE_EXISTS;
         } catch (Exception e) {
             Logger.getLogger(PrintThreadingList.class.getName()).log(Level.SEVERE, null, e);
