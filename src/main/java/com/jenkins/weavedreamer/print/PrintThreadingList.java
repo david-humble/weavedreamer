@@ -34,18 +34,33 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
 
     public PrintThreadingList(EditingSession session, WeavingDraftWindow draftWindow) {
         super(session, draftWindow);
-        numharnesses = draft.getNumHarnesses();          
+        numharnesses = draft.getNumHarnesses();      
+        
         for (int i=0;i < numharnesses;i++) {
         	harnessTotals.add(0);
         }
+        
+		for (int threadnum = 0 ; threadnum < draft.getEnds().size();threadnum++) {
+			int harnessID;
+			harnessID = draft.getEnds().get(threadnum).getHarnessId();
+			// catches unassigned ends 
+			try {	
+				harnessTotals.set(harnessID , harnessTotals.get(harnessID)+1);
+        	} 
+	        catch (Exception e) {}    			
 
+    		}
+
+        
+        
     }
 
     @Override
     public int print(Graphics g, PageFormat pf, int pageIndex) {
 
         try {
-            // For catching IOException      
+            // For catching IOException     
+        	
             if (pageIndex != rememberedPageIndex) {
                 // First time we've visited this page 
                 rememberedPageIndex = pageIndex;
@@ -65,7 +80,7 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
 
             int x = (int) pf.getImageableX() + 10;
             int y = (int) pf.getImageableY() + 12;
-            // Title lineif (currentpick>= draft.getPicks().size()){
+            
 
             if (currentThread >= draft.getEnds().size()) {
                 return Printable.NO_SUCH_PAGE;
@@ -76,15 +91,23 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
             y += 36;
 
             	
-            	
-            
+
             int harnessID;
             
             while (y + 12 < pf.getImageableY() + pf.getImageableHeight()) {
+            	
                 if (currentThread < draft.getEnds().size()) {
                     WarpEnd currentend = draft.getEnds().get(currentThread);
+                    
                     harnessID = currentend.getHarnessId();
-                    harnessTotals.set(harnessID , harnessTotals.get(harnessID)+1);
+                    
+    
+           
+                    
+                    System.out.println (Integer.toString(currentThread)+
+                    	" " 
+                    + Integer.toString(harnessID)+
+                    " " + harnessTotals  ); 
                     
                     String[] Picklist = new String[numharnesses];
                     
