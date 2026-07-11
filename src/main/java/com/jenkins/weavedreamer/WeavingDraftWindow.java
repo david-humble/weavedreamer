@@ -95,6 +95,7 @@ public class WeavingDraftWindow extends EditingSessionWindow {
 
         var statusBar = new StatusBarControl(sbModel);
         statusBar.setName("statusBar");
+        statusBar.setPreferredSize(new Dimension(150,35));
         java.awt.GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -175,23 +176,28 @@ public class WeavingDraftWindow extends EditingSessionWindow {
         };
 
         vscroll.addAdjustmentListener(e -> {
+        	int vpos;
+        	vpos = weavingPatternGrid.getHeight() * vscroll.getValue() / vscroll.getMaximum();
             rightView.setViewPosition(new Point(
                     0,
-                    centreView.getHeight() * vscroll.getValue() / vscroll.getMaximum()
+                    vpos
             ));
             centreView.setViewPosition(new Point(
                     centreView.getViewPosition().x,
-                    centreView.getHeight() * vscroll.getValue() / vscroll.getMaximum()
+                    vpos
             ));
         });
 
         hscroll.addAdjustmentListener(e -> {
+        	int hpos;
+        	hpos = weavingPatternGrid.getWidth() * hscroll.getValue() / hscroll.getMaximum();
+        	
             topView.setViewPosition(new Point(
-                    centreView.getWidth() * hscroll.getValue() / hscroll.getMaximum(),
+                    hpos,
                     0
             ));
             centreView.setViewPosition(new Point(
-                    centreView.getWidth() * hscroll.getValue() / hscroll.getMaximum(),
+                    hpos,
                     centreView.getViewPosition().y
             ));
         });
@@ -216,14 +222,16 @@ public class WeavingDraftWindow extends EditingSessionWindow {
 
         draftPanel.setLayout(new java.awt.GridBagLayout());
 
-        insertComponent(draftPanel, hscroll, 0, 0);
+        // insertComponent(draftPanel, hscroll, 0, 0);
+        insertScrollBar(draftPanel, hscroll, 0, 3,GridBagConstraints.HORIZONTAL);
         insertComponent(draftPanel, topView, 0, 1);
         insertComponent(draftPanel, centreView, 0, 2);
 
         insertComponent(draftPanel, tieUpGrid, 1, 1,
                 new Insets(30, 5, 5, 30));
         insertComponent(draftPanel, rightView, 1, 2);
-        insertComponent(draftPanel, vscroll, 2, 2);
+        //insertComponent(draftPanel, vscroll, 2, 2);
+        insertScrollBar(draftPanel, vscroll, 2, 2,GridBagConstraints.VERTICAL);        
 
         getContentPane().add(draftPanel, BorderLayout.CENTER);
     }
@@ -255,7 +263,16 @@ public class WeavingDraftWindow extends EditingSessionWindow {
         where.add(comp, gridBagConstraints);
     }
 
-
+    private void insertScrollBar(JPanel where, Component comp, int gridX, int gridY,int scrollbarDirection){
+    	var gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = gridX;
+        gridBagConstraints.gridy = gridY;
+        gridBagConstraints.fill = scrollbarDirection;
+        where.add(comp, gridBagConstraints);
+        }
+    	
+    
+    
     public void zoomIn() {
         int square = grids[0].getSquareWidth() * 2;
         for (GridControl g : grids) {

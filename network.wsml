@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<java version="25.0.2" class="java.beans.XMLDecoder">
+<java version="21.0.11" class="java.beans.XMLDecoder">
  <object class="com.jenkins.weavingsimulator.datatypes.WeavingDraft" id="WeavingDraft0">
   <void property="ends">
    <void method="add">
@@ -360,7 +360,12 @@
         </object>
        </void>
        <void method="add">
-        <object idref="Color0"/>
+        <object class="java.awt.Color">
+         <int>255</int>
+         <int>255</int>
+         <int>255</int>
+         <int>255</int>
+        </object>
        </void>
       </object>
      </object>
