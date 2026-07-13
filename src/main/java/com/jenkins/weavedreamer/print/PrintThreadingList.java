@@ -88,7 +88,18 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
             g.drawString("WeaveDreamer: " + draft.getName() + " Threading List, page: " + (pageIndex + 1), x, y);
             g.setFont(textFont);
             // Generate as many lines as will fit in imageable area 
-            y += 36;
+            y += 20;
+            
+            if (pageIndex == 0) {
+                g.setColor(Color.black);
+                g.setFont(textFont);
+            	
+            	g.drawString("Threading Totals: " + harnessTotals.toString(), x,y);
+            	y+=20;
+            	
+            	
+            	
+            }
 
             	
 
@@ -101,13 +112,10 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
                     
                     harnessID = currentend.getHarnessId();
                     
-    
-           
-                    
-                    System.out.println (Integer.toString(currentThread)+
-                    	" " 
-                    + Integer.toString(harnessID)+
-                    " " + harnessTotals  ); 
+                    //System.out.println (Integer.toString(currentThread)+
+                    //	" " 
+                    //+ Integer.toString(harnessID)+
+                    //" " + harnessTotals  ); 
                     
                     String[] Picklist = new String[numharnesses];
                     
@@ -141,18 +149,7 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
 
             }
             
-            if (rememberedEOF) {
-                g.setColor(Color.black);
-                g.setFont(textFont);
-             // assumes we can squeeze this 1 more line on    
-            	g.drawString("Threading Totals: " + harnessTotals.toString(), x,y); 
-            			//(int)pf.getImageableX() + 10,
-            			//(int)pf.getImageableY() + (int)pf.getImageableHeight()-20);
-            	
-          	
-            	
-            	
-            }
+        
             
             return Printable.PAGE_EXISTS;
         } catch (Exception e) {
