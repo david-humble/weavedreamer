@@ -180,7 +180,7 @@ public class AppDriver {
     }
 
     public void pasteThreading(final int r, final int c, int rowMultiplier, int colMultiplier,
-            boolean transpose, boolean reflectV, boolean reflectH) {
+            boolean transpose, boolean reflectV, boolean reflectH, boolean pasteLeft) {
         JPopupMenuFixture popup = threadingDraftGrid().showPopupMenuAt(row(r).column(c));
         popup.menuItemWithPath("Paste Special...").click();
 
@@ -195,6 +195,9 @@ public class AppDriver {
         }
         if (transpose) {
             pasteSpecial.checkBox("transpose").check();
+        }    
+        if (pasteLeft) {
+        	pasteSpecial.checkBox("pasteleft").check();
         }
         pasteSpecial.button("ok").click();
     }

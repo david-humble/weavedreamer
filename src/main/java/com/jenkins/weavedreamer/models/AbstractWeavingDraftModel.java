@@ -98,7 +98,7 @@ public abstract class AbstractWeavingDraftModel
      * @see #getSetValueCommand
      */
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        session.execute(getSetValueCommand(aValue, rowIndex, columnIndex));
+        getSession().execute(getSetValueCommand(aValue, rowIndex, columnIndex));
     }
 
     /**
@@ -223,7 +223,11 @@ public abstract class AbstractWeavingDraftModel
 
     public abstract EditedValueProvider getEditedValueProvider();
 
-    // An edited value provider that always returns true.
+    public EditingSession getSession() {
+		return session;
+	}
+
+	// An edited value provider that always returns true.
     protected class SetValueProvider implements EditedValueProvider {
         public SetValueProvider() {
         }

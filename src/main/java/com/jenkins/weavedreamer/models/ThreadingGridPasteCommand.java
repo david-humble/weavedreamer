@@ -31,20 +31,25 @@ public class ThreadingGridPasteCommand implements Command {
     }
 
     private void paste(PasteGrid cells) {
+    	
+    	final int pasteBlockStartCol = Math.max(0, -cells.getStartColumn());
         final int rowcount = Math.min(cells.getRows(), model.getRowCount() - cells.getStartRow());
-        final int colcount = Math.min(cells.getColumns(), model.getColumnCount() - cells.getStartColumn());
+        // final int colcount = Math.min(cells.getColumns(), model.getColumnCount() - cells.getStartColumn());
+        final int colcount = Math.min(cells.getColumns(), model.getColumnCount() - cells.getStartColumn())-pasteBlockStartCol;
 
         for (int col = 0; col != colcount; col++) {
+        	//System.out.println(Integer.toString(pasteBlockStartCol) + " "+ Integer.toString(col) + " " + Integer.toString(cells.getStartColumn()));
             model.setBooleanValueAt(false,
                     -1,
-                    col + cells.getStartColumn());
-
+                    col + cells.getStartColumn()+pasteBlockStartCol);
+                    //col + pasteBlockStartCol);
             for (int row = 0; row != rowcount; row++) {
 
 
-                model.setBooleanValueAt(cells.getValue(row, col),
+                model.setBooleanValueAt(cells.getValue(row, col +pasteBlockStartCol ),
                         row + cells.getStartRow(),
-                        col + cells.getStartColumn());
+                        col + cells.getStartColumn() +pasteBlockStartCol  );
+                       //col + pasteBlockStartCol);
             }
         }
     }
