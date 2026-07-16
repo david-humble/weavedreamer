@@ -19,7 +19,7 @@ html_template = """<html>
 url = "https://sourceforge.net/p/weavingsim/wiki/User%20Guide/"
 
 print ("Fetching...")
-soup = BeautifulSoup(urlopen(url))
+soup = BeautifulSoup(urlopen(url),features="lxml")
 
 print ("Writing text")
 tags = soup.find_all("div", attrs={"class": "markdown_content"})

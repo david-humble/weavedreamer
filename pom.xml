@@ -34,6 +34,7 @@
                     <release>21</release>
                 </configuration>
             </plugin>
+            <!--
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
@@ -45,6 +46,7 @@
                     </archive>
                 </configuration>
             </plugin>
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -67,6 +69,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
+                <version>3.6.3</version> 
                 <executions>
                     <execution>
                         <configuration>
@@ -89,6 +92,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.18.1</version>
                 <configuration>
+                <argLine>--add-opens=java.base/java.util=ALL-UNNAMED</argLine>
                     <excludes>
                         <exclude>**/uat/*</exclude>
                     </excludes>
@@ -158,6 +162,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+  				<version>3.4.2</version>               
                 <configuration>
                     <archive>
                         <manifest>
