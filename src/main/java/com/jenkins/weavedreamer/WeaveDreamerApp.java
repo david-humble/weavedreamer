@@ -505,12 +505,13 @@ public class WeaveDreamerApp extends javax.swing.JFrame implements AbstractApp {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+    	/**
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException |
                  IllegalAccessException ignored) {
         }
-
+        */
         WeaveDreamerApp app = new WeaveDreamerApp();
         if (args.length > 0) {
             File draftFile = new File(args[0]);

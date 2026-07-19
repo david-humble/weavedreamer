@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,22 +29,44 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
     private int rememberedThread = 0;
     private int currentThread = 0;
     private boolean rememberedEOF = false;
+    private int numharnesses;
+    private ArrayList<Integer> harnessTotals = new ArrayList<Integer>(); 
 
     public PrintThreadingList(EditingSession session, WeavingDraftWindow draftWindow) {
         super(session, draftWindow);
+        numharnesses = draft.getNumHarnesses();      
+        
+        for (int i=0;i < numharnesses;i++) {
+        	harnessTotals.add(0);
+        }
+        
+		for (int threadnum = 0 ; threadnum < draft.getEnds().size();threadnum++) {
+			int harnessID;
+			harnessID = draft.getEnds().get(threadnum).getHarnessId();
+			// catches unassigned ends 
+			try {	
+				harnessTotals.set(harnessID , harnessTotals.get(harnessID)+1);
+        	} 
+	        catch (Exception e) {}    			
 
+    		}
+
+        
+        
     }
 
     @Override
     public int print(Graphics g, PageFormat pf, int pageIndex) {
 
         try {
-            // For catching IOException      
+            // For catching IOException     
+        	
             if (pageIndex != rememberedPageIndex) {
                 // First time we've visited this page 
                 rememberedPageIndex = pageIndex;
                 // If encountered EOF on previous page, done  
                 if (rememberedEOF) {
+
                     return Printable.NO_SUCH_PAGE;
                 }
                 // Save current position in input file 
@@ -57,7 +80,7 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
 
             int x = (int) pf.getImageableX() + 10;
             int y = (int) pf.getImageableY() + 12;
-            // Title lineif (currentpick>= draft.getPicks().size()){
+            
 
             if (currentThread >= draft.getEnds().size()) {
                 return Printable.NO_SUCH_PAGE;
@@ -65,16 +88,40 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
             g.drawString("WeaveDreamer: " + draft.getName() + " Threading List, page: " + (pageIndex + 1), x, y);
             g.setFont(textFont);
             // Generate as many lines as will fit in imageable area 
-            y += 36;
+            y += 20;
+            
+            if (pageIndex == 0) {
+                g.setColor(Color.black);
+                g.setFont(textFont);
+            	
+            	g.drawString("Threading Totals: " + harnessTotals.toString(), x,y);
+            	y+=20;
+            	
+            	
+            	
+            }
 
+            	
+
+            int harnessID;
+            
             while (y + 12 < pf.getImageableY() + pf.getImageableHeight()) {
+            	
                 if (currentThread < draft.getEnds().size()) {
                     WarpEnd currentend = draft.getEnds().get(currentThread);
-                    int numharnesses = draft.getNumHarnesses();
+                    
+                    harnessID = currentend.getHarnessId();
+                    
+                    //System.out.println (Integer.toString(currentThread)+
+                    //	" " 
+                    //+ Integer.toString(harnessID)+
+                    //" " + harnessTotals  ); 
+                    
                     String[] Picklist = new String[numharnesses];
+                    
 
                     for (int j = 0; j < numharnesses; j++) {
-                        Picklist[j] = (Integer.toString((j + 1) * (currentend.getHarnessId() == j ? 1 : 0)));
+                        Picklist[j] = (Integer.toString((j + 1) * (harnessID == j ? 1 : 0)));
                         if (!"0".equals(Picklist[j])) {
                             g.fillRect(x + 15 + 10 * j, y - 10, 10, 10);
                         }
@@ -101,6 +148,9 @@ public class PrintThreadingList extends AbstractWeaveDreamerPrintable {
                 }
 
             }
+            
+        
+            
             return Printable.PAGE_EXISTS;
         } catch (Exception e) {
             Logger.getLogger(PrintThreadingList.class.getName()).log(Level.SEVERE, null, e);

@@ -18,6 +18,7 @@ public class PasteSpecialWindow extends javax.swing.JDialog {
     private JFormattedTextField skip_v;
     private JFormattedTextField repeat_h;
     private JFormattedTextField repeat_v;
+    private JCheckBox pasteLeft;
     private JButton ok;
     private JButton cancel;
 
@@ -99,6 +100,13 @@ public class PasteSpecialWindow extends javax.swing.JDialog {
         repeat_v.setColumns(2);
         repeat_v.setText("1");
         getContentPane().add(repeat_v, makeConstraints(GridBagConstraints.REMAINDER));
+        
+        
+        pasteLeft = new JCheckBox();
+        pasteLeft.setText("Paste Left");
+        pasteLeft.setName("pasteleft");
+        getContentPane().add(pasteLeft, makeConstraints(GridBagConstraints.REMAINDER));
+        
 
         ok = new JButton();
         ok.setText("OK");
@@ -155,5 +163,22 @@ public class PasteSpecialWindow extends javax.swing.JDialog {
 
     public int getRepeatV() {
         return Integer.parseInt(repeat_v.getText());
+        
+ }
+    public boolean isPasteLeft() {
+    	return pasteLeft.isSelected();
+    	
     }
+    
+    public void setIsPasteLeft(boolean enabled) {
+    	pasteLeft.setVisible(enabled);
+    	
+    	pasteLeft.setSelected(false);
+    		
+ 
+    	
+    	
+    	
+    }
+    
 }

@@ -178,12 +178,19 @@ public class ThreadingDraftModel extends CopyableWeavingGridModel {
 
     @Override
     protected PasteGrid getUndoSelection(PasteGrid selection) {
+    	/** System.out.println("Undo Area "+  
+    			Integer.toString(0)+ " "+ 
+    			Integer.toString(Math.max(0,selection.getStartColumn()))+ " "+ 
+    			Integer.toString(this.getRowCount())+ " "+ 
+    			Integer.toString( Math.min(selection.getStartColumn() + selection.getColumns(), this.getColumnCount())) + " "+
+    			Integer.toString(Math.max(0,selection.getStartColumn())));
+    	*/
         PasteGrid grid = new PasteGrid(this,
                 new GridSelection(0,
-                        selection.getStartColumn(),
+                        Math.max(0,selection.getStartColumn()),
                         this.getRowCount(),
                         Math.min(selection.getStartColumn() + selection.getColumns(), this.getColumnCount())));
-        grid.setOrigin(0, selection.getStartColumn());
+        grid.setOrigin(0, Math.max(0,selection.getStartColumn()));
         return grid;
     }
 }

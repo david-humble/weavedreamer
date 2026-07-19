@@ -55,6 +55,8 @@ public class UndoTest extends WeavingTestCase {
 		ui.pickIs(0,1,Color.white);
 
 		ui.setThreading(1, 0);
+		
+	
 		ui.harnessIs(1, 0, Color.black);
 		ui.undo();
 		ui.harnessIs(1, 0, Color.white);
@@ -79,6 +81,50 @@ public class UndoTest extends WeavingTestCase {
 		ui.pasteThreading(0, 4);
 		ui.harnessIs(3, 0, Color.black);
 		ui.undo(); // this appears not to work
-		ui.endIs(3, 4, Color.white);		
-	}
+		ui.endIs(3, 4, Color.white);	
+		//ui.endIs(3, 4, Color.blue);	
+		
+		}
+	
+	
+
+	@Test
+	public void  testUndoPasteLeft() {
+		// checks for correct undo when pase block of left edge 
+	
+
+			ui.newDraft(4, 6, 20, 20, "Monochrome");
+			ui.setThreadingCell(0, 0);
+			ui.setThreadingCell(0, 10);
+			ui.setThreadingCell (1, 11);
+			ui.setThreadingCell (2, 12);
+			ui.setThreadingCell (3, 13);
+			ui.selectThreading(0, 10, 4, 14);
+			
+			ui.pasteThreading (0, 9, 1, 1, false, false, false, true);
+		
+			ui.endIs(0, 6, Color.BLACK);
+			ui.endIs(1, 7, Color.BLACK);
+			ui.endIs(2, 8, Color.BLACK);
+			ui.endIs(3, 9, Color.BLACK);
+			ui.undo();
+			ui.endIs(0, 6, Color.WHITE);
+			ui.endIs(1, 7, Color.WHITE);
+			ui.endIs(2, 8, Color.WHITE);
+			ui.endIs(3, 9, Color.WHITE);
+			
+			ui.selectThreading(0, 10, 4, 14);			
+			// paste off the edge 
+			ui.pasteThreading (0, 1, 1, 1, false, false, false, true);
+			ui.endIs(0, 0, Color.WHITE);
+			ui.endIs(2, 0, Color.BLACK);
+			ui.endIs(3, 1, Color.BLACK);	
+			ui.undo();
+			ui.endIs(0, 0, Color.BLACK);
+			ui.endIs(2, 0, Color.WHITE);
+			ui.endIs(3, 1, Color.WHITE);				
+	
+		
+		
+		}
 }

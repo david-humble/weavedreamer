@@ -204,10 +204,35 @@ public class BasicDraftEditTest extends WeavingTestCase {
 		ui.setPick (3, 1);
 		ui.selectPick(0, 0, 4, 4);
 		
-		ui.pasteThreading (0, 0, 1, 1, true, false, false);
+		ui.pasteThreading (0, 0, 1, 1, true, false, false, false);
 		ui.endIs(2, 0, Color.BLACK);
 		ui.endIs(1, 1, Color.BLACK);
 		ui.endIs(2, 2, Color.BLACK);
 		ui.endIs(3, 3, Color.BLACK);
 	}
+	
+	@Test
+	public void testPasteLeft() {
+		ui.newDraft(4, 6, 20, 20, "Monochrome");
+		ui.setThreadingCell(0, 0);
+		ui.setThreadingCell(0, 10);
+		ui.setThreadingCell (1, 11);
+		ui.setThreadingCell (2, 12);
+		ui.setThreadingCell (3, 13);
+		ui.selectThreading(0, 10, 4, 14);
+		
+		ui.pasteThreading (0, 9, 1, 1, false, false, false, true);
+	
+		ui.endIs(0, 6, Color.BLACK);
+		ui.endIs(1, 7, Color.BLACK);
+		ui.endIs(2, 8, Color.BLACK);
+		ui.endIs(3, 9, Color.BLACK);
+		// paste off the edge 
+		ui.pasteThreading (0, 1, 1, 1, false, false, false, true);
+		ui.endIs(1, 0, Color.WHITE);
+		ui.endIs(2, 0, Color.BLACK);
+		ui.endIs(3, 1, Color.BLACK);		
+	}
+	
+	
 }
