@@ -176,8 +176,8 @@ public class WeavingDraftWindow extends EditingSessionWindow {
         };
 
         vscroll.addAdjustmentListener(e -> {
-        	int vpos;
-        	vpos = weavingPatternGrid.getHeight() * vscroll.getValue() / vscroll.getMaximum();
+            var scrollable = weavingPatternGrid.getHeight() - vscroll.getHeight() + 60;
+        	int vpos = scrollable * vscroll.getValue() / vscroll.getMaximum();
             rightView.setViewPosition(new Point(
                     0,
                     vpos
@@ -189,8 +189,8 @@ public class WeavingDraftWindow extends EditingSessionWindow {
         });
 
         hscroll.addAdjustmentListener(e -> {
-        	int hpos;
-        	hpos = weavingPatternGrid.getWidth() * hscroll.getValue() / hscroll.getMaximum();
+            var scrollable = weavingPatternGrid.getWidth() - hscroll.getWidth() + 60;
+            int hpos = scrollable  * hscroll.getValue() / hscroll.getMaximum();
         	
             topView.setViewPosition(new Point(
                     hpos,

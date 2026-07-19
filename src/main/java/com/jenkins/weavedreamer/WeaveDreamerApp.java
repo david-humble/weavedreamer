@@ -30,6 +30,7 @@ import com.jenkins.weavedreamer.models.PasteGrid;
 import com.jenkins.weavingsimulator.datatypes.Palette;
 import com.jenkins.weavingsimulator.datatypes.WeavingDraft;
 import com.jenkins.wifio.WIFException;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -37,6 +38,7 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -46,6 +48,7 @@ import java.beans.XMLEncoder;
 import java.io.*;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
@@ -61,8 +64,8 @@ public class WeaveDreamerApp extends javax.swing.JFrame implements AbstractApp {
      *
      */
     private static final long serialVersionUID = 1L;
-    public static final String WIF_EXTENSION = ".wif";
-    private static final String DRAFT_EXTENSION = ".wsml";
+    public static final String WIF_EXTENSION = "wif";
+    private static final String DRAFT_EXTENSION = "wsml";
 
     /**
      * Creates new form WeaveDreamerApp
@@ -85,9 +88,6 @@ public class WeaveDreamerApp extends javax.swing.JFrame implements AbstractApp {
 
         fileChooser = new JFileChooser(prefs.get("last_browse", ""));
         fileChooser.setAcceptAllFileFilterUsed(false);
-
-        fileChooser.addChoosableFileFilter(new DraftFileFilter());
-        fileChooser.addChoosableFileFilter(new WifFileFilter());
 
         InputStream imgStream = getClass().getResourceAsStream("icon.png");
         try {
@@ -508,10 +508,8 @@ public class WeaveDreamerApp extends javax.swing.JFrame implements AbstractApp {
     	/**
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (UnsupportedLookAndFeelException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
+        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException |
+                 IllegalAccessException ignored) {
         }
         */
         WeaveDreamerApp app = new WeaveDreamerApp();
@@ -546,44 +544,58 @@ public class WeaveDreamerApp extends javax.swing.JFrame implements AbstractApp {
             }
             outs.close();
             session.setDraftModified(false);
-        } catch (IOException e) {
+        } catch (IOException | ConfigurationException e) {
             JOptionPane.showMessageDialog(this, "Failed to save " + file + ": " + e.getMessage(),
                     "Save Error", JOptionPane.ERROR_MESSAGE);
-
         }
     }
 
     private void saveAsWeavingDraft(EditingSession session) {
         fileChooser.setAcceptAllFileFilterUsed(false);
-        fileChooser.setSelectedFile(new File(""));
-        int res = fileChooser.showSaveDialog(this);
-        if (res == JFileChooser.APPROVE_OPTION) {
-            if (fileChooser.getFileFilter().getClass() == WifFileFilter.class) {
-                session.setSaveasDraft(false);
+        var wifFiles = new FileNameExtensionFilter("Weaving Interchange File", WIF_EXTENSION);
+        var draftFiles = new FileNameExtensionFilter("Weaving Draft File", DRAFT_EXTENSION);
+        try {
+            fileChooser.setSelectedFile(new File(""));
+            fileChooser.addChoosableFileFilter(wifFiles);
+            fileChooser.addChoosableFileFilter(draftFiles);
+            int res = fileChooser.showSaveDialog(this);
+            if (res == JFileChooser.APPROVE_OPTION) {
+                if (Objects.equals(fileChooser.getFileFilter(), wifFiles)) {
+                    session.setSaveasDraft(false);
+                } else if (Objects.equals(fileChooser.getFileFilter(), draftFiles)) {
+                    session.setSaveasDraft(true);
+                } else {
+                    System.out.println("borked");
+                }
 
-            } else if (fileChooser.getFileFilter().getClass() == DraftFileFilter.class) {
-                session.setSaveasDraft(true);
-            } else {
-                System.out.println("borked");
+                File file = fileChooser.getSelectedFile();
+                session.setFile(file);
+                saveWeavingToFile(session);
             }
-
-            File file = fileChooser.getSelectedFile();
-            session.setFile(file);
-            saveWeavingToFile(session);
+        } finally {
+            fileChooser.removeChoosableFileFilter(wifFiles);
+            fileChooser.removeChoosableFileFilter(draftFiles);
         }
     }
 
     private void openWeavingDraft(File file) throws IOException {
 
         if (file == null) {
-            fileChooser.setAcceptAllFileFilterUsed(true);
-            int res = fileChooser.showOpenDialog(this);
-            if (res == JFileChooser.APPROVE_OPTION) {
-                file = fileChooser.getSelectedFile();
-            } else {
-                return;
+            var allDrafts = new FileNameExtensionFilter("Weaving files", WIF_EXTENSION, DRAFT_EXTENSION);
+            try {
+                fileChooser.addChoosableFileFilter(allDrafts);
+                fileChooser.setAcceptAllFileFilterUsed(true);
+                int res = fileChooser.showOpenDialog(this);
+                if (res == JFileChooser.APPROVE_OPTION) {
+                    file = fileChooser.getSelectedFile();
+                } else {
+                    return;
+                }
+            } finally {
+                fileChooser.removeChoosableFileFilter(allDrafts);
             }
         }
+
 
         WeavingDraft draft = null;
         try {
@@ -605,13 +617,18 @@ public class WeaveDreamerApp extends javax.swing.JFrame implements AbstractApp {
                 draft = readWeavingDraft(ins);
             }
             ins.close();
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             JOptionPane.showMessageDialog(this, "Failed to open " + file
                     + ": " + e.getMessage(), "Open Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        openWeavingDraftWindow(new EditingSession(draft, !file.getName().toLowerCase().endsWith(WIF_EXTENSION), this), file);
+        openWeavingDraftWindow(new EditingSession(draft, !file.getName().
+
+                toLowerCase().
+
+                endsWith(WIF_EXTENSION), this), file);
     }
 
     private void reportWifFailure(File file) {
@@ -710,7 +727,7 @@ public class WeaveDreamerApp extends javax.swing.JFrame implements AbstractApp {
     }
 
     private void writeWIF(WeavingDraft draft, OutputStream outs)
-            throws IOException {
+            throws IOException, ConfigurationException {
         WIFIO WifWrite = new WIFIO();
         WifWrite.writeWeavingDraft(draft, outs);
     }
@@ -724,49 +741,6 @@ public class WeaveDreamerApp extends javax.swing.JFrame implements AbstractApp {
         }
         draft.validate();
         return draft;
-
-
-    }
-
-
-    private class DraftFileFilter extends javax.swing.filechooser.FileFilter {
-
-        /**
-         * Whether the given file is accepted by this filter.
-         */
-        public boolean accept(File f) {
-            String name = f.getName().toLowerCase();
-            return f.isDirectory() || name.endsWith(DRAFT_EXTENSION);
-        }
-
-        /**
-         * The description of this filter. For example: "JPG and GIF Images"
-         *
-         * @see FileView#getName
-         */
-        public String getDescription() {
-            return "Weaving Draft Files";
-        }
-    }
-
-    private class WifFileFilter extends javax.swing.filechooser.FileFilter {
-
-        /**
-         * Whether the given file is accepted by this filter.
-         */
-        public boolean accept(File f) {
-            String name = f.getName().toLowerCase();
-            return f.isDirectory() || name.endsWith(WIF_EXTENSION);
-        }
-
-        /**
-         * The description of this filter. For example: "JPG and GIF Images"
-         *
-         * @see FileView#getName
-         */
-        public String getDescription() {
-            return "Weaving Interchange Files";
-        }
     }
 
     private PasteGrid selection = new PasteGrid();
@@ -802,8 +776,6 @@ public class WeaveDreamerApp extends javax.swing.JFrame implements AbstractApp {
 
     private GettingStartedWindow gettingStartedWindow;
 
-    private WifFileFilter wifFilter;
-    DraftFileFilter draftFilter;
     private int newFileNum = 0;
     private final JFileChooser fileChooser;
 

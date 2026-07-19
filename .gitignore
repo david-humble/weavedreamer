@@ -18,3 +18,8 @@ target
 .classpath
 release.properties
 out.xml
+/jdks/
+/runtime/
+/WeaveDreamer.app/Contents/
+/src/assembly
+/.idea
